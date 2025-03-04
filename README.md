@@ -1,38 +1,14 @@
-<p align="center">
-  <img alt="Rocketseat Education" src="https://avatars.githubusercontent.com/u/69590972?s=200&v=4" width="100px" />
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/static/v1?label=Rocketseat&message=Education&color=8257e5&labelColor=202024" alt="Rocketseat Project" />
-  <a href="LICENSE"><img  src="https://img.shields.io/static/v1?label=License&message=MIT&color=8257e5&labelColor=202024" alt="License"></a>
-</p>
-
-
-## 💻 Projeto
+## 💻 Project
 
 04-ignite-shop
 
-## 📝 Licença
 
-Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-<p align="center">
-  Feito com 💜 by Rocketseat
-</p>
-
-
-<!--START_SECTION:footer-->
-
-<br />
-<br />
-
-<p align="center">
-  <a href="https://discord.gg/rocketseat" target="_blank">
-    <img align="center" src="https://storage.googleapis.com/golden-wind/comunidade/rodape.svg" alt="banner"/>
-  </a>
-</p>
-
-<!--END_SECTION:footer-->
-
+## Dev Guidance
+Para rodar o projeto é necessário ter as keys do stripe
+- [LINK STRIPE](https://dashboard.stripe.com/)
+- [DOC STRIPE](https://docs.stripe.com/)
+- [CARD TEST](https://docs.stripe.com/testing?locale=pt-BR)
+- [FIGMA](https://www.figma.com/design/qvcsuadz4ghCdeUYHZ3HxD/Ignite-Shop-2.0-%E2%80%A2-Desafio-React-(Copy)?node-id=0-1&p=f&t=6nsgV6BNZOoqvaWl-0)
+---- 
+- Card number success: **4242424242424242**
+- Card number fail: **4000000000000002**
