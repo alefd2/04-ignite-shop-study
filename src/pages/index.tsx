@@ -10,23 +10,32 @@ import { HomeContainer, Product } from "../styles/pages/home";
 
 import "keen-slider/keen-slider.min.css";
 import Stripe from "stripe";
+import { IProduct } from "../context/CartContext";
+import { useEffect, useState } from "react";
+import { useCart } from "../hooks/useCarts";
+import { CartButton } from "../components/CartButton/CartButton";
 
 interface HomeProps {
-  products: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: string;
-  }[];
+  products: IProduct[];
 }
 
 export default function Home({ products }: HomeProps) {
+  const { addToCart, checkIfItemAlreadyExists } = useCart();
+
   const [sliderRef] = useKeenSlider({
     slides: {
       perView: 3,
       spacing: 48,
     },
   });
+
+  function handleAddToCart(
+    e: React.MouseEvent<HTMLButtonElement>,
+    product: IProduct
+  ) {
+    e.preventDefault();
+    addToCart(product);
+  }
 
   return (
     <>
@@ -46,8 +55,16 @@ export default function Home({ products }: HomeProps) {
                 <Image src={product.imageUrl} width={520} height={480} alt="" />
 
                 <footer>
-                  <strong>{product.name}</strong>
-                  <span>{product.price}</span>
+                  <div>
+                    <strong>{product.name}</strong>
+                    <span>{product.price}</span>
+                  </div>
+                  <CartButton
+                    size="large"
+                    color="green"
+                    disabled={checkIfItemAlreadyExists(product.id)}
+                    onClick={(e) => handleAddToCart(e, product)}
+                  />
                 </footer>
               </Product>
             </Link>

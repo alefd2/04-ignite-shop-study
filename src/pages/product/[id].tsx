@@ -2,54 +2,39 @@ import axios from "axios";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/future/image";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import Stripe from "stripe";
+
 import { stripe } from "../../lib/stripe";
 import {
   ImageContainer,
   ProductContainer,
   ProductDetails,
 } from "../../styles/pages/product";
+import { IProduct } from "../../context/CartContext";
+import { useCart } from "../../hooks/useCarts";
 
 interface ProductProps {
-  product: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    price: string;
-    description: string;
-    defaultPriceId: string;
-  };
+  product: IProduct;
 }
 
 export default function Product({ product }: ProductProps) {
-  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
-    useState(false);
+  const { isFallback } = useRouter();
 
-  async function handleBuyButton() {
-    try {
-      setIsCreatingCheckoutSession(true);
+  const { addToCart, checkIfItemAlreadyExists } = useCart();
 
-      const response = await axios.post("/api/checkout", {
-        priceId: product.defaultPriceId,
-      });
-
-      const { checkoutUrl } = response.data;
-
-      window.location.href = checkoutUrl;
-    } catch (err) {
-      // ferramenta de observabilidade datadog, sentry, logrocket
-      setIsCreatingCheckoutSession(false);
-      alert("Falha ao redirecionar ao checkout!");
-    }
+  if (isFallback) {
+    return <p>Loading...</p>;
   }
+
+  const itemAlreadyInCart = checkIfItemAlreadyExists(product.id);
 
   return (
     <>
       <Head>
-        <title>{product.name} | Ignite Shop</title>
+        <title>{`${product.name} | Ignite Shop`}</title>
       </Head>
-
       <ProductContainer>
         <ImageContainer>
           <Image src={product.imageUrl} width={520} height={480} alt="" />
@@ -62,10 +47,12 @@ export default function Product({ product }: ProductProps) {
           <p>{product.description}</p>
 
           <button
-            disabled={isCreatingCheckoutSession}
-            onClick={handleBuyButton}
+            disabled={itemAlreadyInCart}
+            onClick={() => addToCart(product)}
           >
-            Comprar agora
+            {itemAlreadyInCart
+              ? "Produto já está no carrinho"
+              : "Colocar na sacola"}
           </button>
         </ProductDetails>
       </ProductContainer>
@@ -73,11 +60,12 @@ export default function Product({ product }: ProductProps) {
   );
 }
 
-// escolhe algumas páginas para serem geradas de forma estática ´prod_MLH5Wy0Y97hDAC´
 export const getStaticPaths: GetStaticPaths = async () => {
+  const paths = [{ params: { id: "prod_MO0C3yNu4UBp9p" } }];
+
   return {
-    paths: [{ params: { id: "prod_RsC0PmoHMmoJOA" } }],
-    fallback: "blocking",
+    paths,
+    fallback: true,
   };
 };
 
@@ -102,10 +90,11 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
           style: "currency",
           currency: "BRL",
         }).format(price.unit_amount / 100),
+        numberPrice: price.unit_amount / 100,
         description: product.description,
         defaultPriceId: price.id,
       },
     },
-    revalidate: 60 * 60 * 1, // 1 hours
+    revalidate: 60 * 60 * 1, // 1 hour
   };
 };
